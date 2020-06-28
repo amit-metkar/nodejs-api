@@ -1,27 +1,40 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser')
-const mongoose = require('mongoose');
-const userRoutes = require('./routes/user')
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const userRoutes = require("./routes/user");
+const errorResponse = require("./utils/errorResponse");
+const logResponseTime = require("./utils/logResponseTime");
 const app = express();
+
+app.use(logResponseTime)
 
 app.use(cors());
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.use('/user', userRoutes);
+app.use("/user", userRoutes);
+
+app.use(function (err, req, res, next) {
+  res.status(500).json(errorResponse(err));
+});
 
 app.use((req, res) => {
-    res.status(400).send('api not found')
-})
+  res.status(404).json(errorResponse("api not found"));
+});
 
-app.set('port', process.env.PORT || 4200);
+app.set("port", process.env.PORT || 4200);
 
-mongoose.connect('mongodb://127.0.0.1:27017/amit', { useNewUrlParser: true, useUnifiedTopology: true }).then(result => {
-    const server = app.listen(app.get('port'), () => {
-        console.log(`Server started on port ${server.address().port}`);
+mongoose
+  .connect("mongodb://127.0.0.1:27017/amit", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then((result) => {
+    const server = app.listen(app.get("port"), () => {
+      console.log(`Server started on port ${server.address().port}`);
     });
-})
+  });
 
-module.exports = app
+module.exports = app;
