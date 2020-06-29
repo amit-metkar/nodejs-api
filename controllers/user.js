@@ -6,10 +6,10 @@ module.exports.getUsers = (req, res, next) => {
   try {
     User.find()
       .then((users) => {
-        res.status(200).json(successResponse(users));
+        res.status(200).json(successResponse(req, users));
       })
       .catch((error) => {
-        res.status(400).json(errorResponse(error.message));
+        res.status(400).json(errorResponse(req, error.message));
       });
   } catch (error) {
     next(error);
@@ -21,10 +21,10 @@ module.exports.getUserByEmail = (req, res, next) => {
     const { email } = req.params;
     User.find({ email })
       .then((user) => {
-        res.status(200).json(successResponse(user));
+        res.status(200).json(successResponse(req, user));
       })
       .catch((error) => {
-        res.status(400).json(errorResponse(error.message));
+        res.status(400).json(errorResponse(req, error.message));
       });
   } catch (error) {
     next(error);
@@ -38,15 +38,15 @@ module.exports.searchUser = (req, res, next) => {
       res
         .status(400)
         .json(
-          errorResponse("Missing 'by' and/ or 'val' query string parameters")
+          errorResponse(req, "Missing 'by' and/ or 'val' query string parameters")
         );
     } else {
       User.find({ [by]: val })
         .then((user) => {
-          res.status(200).json(successResponse(user));
+          res.status(200).json(successResponse(req, user));
         })
         .catch((error) => {
-          res.status(400).json(errorResponse(error.message));
+          res.status(400).json(errorResponse(req, error.message));
         });
     }
   } catch (error) {
@@ -83,11 +83,11 @@ module.exports.newUser = (req, res, next) => {
     user
       .save()
       .then((result) => {
-        res.status(200).json(successResponse(result));
+        res.status(200).json(successResponse(req, result));
       })
       .catch((error) => {
         console.log(error);
-        res.status(400).json(errorResponse(error.message));
+        res.status(400).json(errorResponse(req, error.message));
       });
   } catch (error) {
     next(error);

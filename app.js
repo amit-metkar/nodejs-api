@@ -17,11 +17,11 @@ app.use(bodyParser.json());
 app.use("/user", userRoutes);
 
 app.use(function (err, req, res, next) {
-  res.status(500).json(errorResponse(err));
+  res.status(500).json(errorResponse(req, err));
 });
 
 app.use((req, res) => {
-  res.status(404).json(errorResponse("api not found"));
+  res.status(404).json(errorResponse(req, "api not found"));
 });
 
 app.set("port", process.env.PORT || 4200);

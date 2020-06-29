@@ -1,10 +1,21 @@
+const { getElapsedTimeInMs } = require(".");
+
 module.exports = (req, res, next) => {
   const startHrTime = process.hrtime();
+  req.startHrTime = startHrTime;
 
   res.on("finish", () => {
-    const elapsedHrTime = process.hrtime(startHrTime);
-    const elapsedTimeInMs = elapsedHrTime[0] * 1000 + elapsedHrTime[1] / 1e6;
-    console.log("%s : %fms", req.path, elapsedTimeInMs);
+    const elapsedTimeInMs = getElapsedTimeInMs(startHrTime);
+    console.log(
+      `${req.method} ${req.originalUrl} [FINISH] ${elapsedTimeInMs}ms`
+    );
+  });
+
+  res.on("close", () => {
+    const elapsedTimeInMs = getElapsedTimeInMs(startHrTime);
+    console.log(
+      `${req.method} ${req.originalUrl} [CLOSE] ${elapsedTimeInMs}ms`
+    );
   });
 
   next();
