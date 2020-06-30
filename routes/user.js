@@ -11,4 +11,8 @@ router.get('/search', userController.searchUser)
 
 router.post('/', userController.newUser);
 
+router.patch('/update/byId/:id', userController.updateUser)
+
+router.patch('/update/byEmail/:email', userController.updateUser)
+
 module.exports = router

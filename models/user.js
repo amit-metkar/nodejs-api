@@ -15,7 +15,12 @@ const userSchema = new Schema({
     addressLine2: String,
     city: String,
     state: String,
-    zip: String
+    zip: String,
+    isActive: Boolean,
+    createdOn: Date,
+    createdBy: String,
+    UpdatedOn: Date,
+    UpdatedBy: String
 })
 
 module.exports = mongoose.model('User', userSchema);
