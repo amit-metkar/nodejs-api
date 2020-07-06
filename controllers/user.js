@@ -15,9 +15,7 @@ module.exports.getUsers = (req, res, next) => {
       .then((users) => {
         res.status(200).json(successResponse(req, users));
       })
-      .catch((error) => {
-        res.status(400).json(errorResponse(req, error.message));
-      });
+      .catch(next);
   } catch (error) {
     next(error);
   }
@@ -27,16 +25,14 @@ module.exports.findUserById = (req, res, next) => {
     try {
       const { id } = req.params;
       if (id === undefined) {
-        res.status(400).json(errorResponse(req, "Missing input parameter, id"));
+        throw 'Missing "id" parameter'
       }
 
       User.findById(id)
         .then((user) => {
           res.status(200).json(successResponse(req, user));
         })
-        .catch((error) => {
-          res.status(400).json(errorResponse(req, error.message));
-        });
+        .catch(next);
     } catch (error) {
       next(error);
     }
@@ -46,16 +42,14 @@ module.exports.findUserByEmail = (req, res, next) => {
   try {
     const { email } = req.params;
     if (email === undefined) {
-      res.status(400).json(errorResponse(req, "Missing input parameter, email"));
+      throw 'Missing "email" parameter'
     }
 
     User.findOne({ email })
       .then((users) => {
         res.status(200).json(successResponse(req, users));
       })
-      .catch((error) => {
-        res.status(400).json(errorResponse(req, error.message));
-      });
+      .catch(next);
   } catch (error) {
     next(error);
   }
@@ -65,15 +59,13 @@ module.exports.searchUser = (req, res, next) => {
   try {
     const { by, val } = req.query;
     if (!by || !val) {
-      res.status(400).json(errorResponse(req, "Missing 'by' and/ or 'val' query string parameters"));
+      throw 'Missing "by" and/ or "val" query string parameters'
     } else {
       User.find({ [by]: val })
         .then((users) => {
           res.status(200).json(successResponse(req, users));
         })
-        .catch((error) => {
-          res.status(400).json(errorResponse(req, error.message));
-        });
+        .catch(next);
     }
   } catch (error) {
     next(error);
@@ -105,10 +97,7 @@ module.exports.newUser = (req, res, next) => {
       .then((result) => {
         res.status(200).json(successResponse(req, result));
       })
-      .catch((error) => {
-        console.log(error);
-        res.status(400).json(errorResponse(req, error.message));
-      });
+      .catch(next);
   } catch (error) {
     next(error);
   }
@@ -123,7 +112,7 @@ module.exports.updateUser = (req, res, next) => {
     } else if (email) {
       filter = { email };
     } else {
-      res.status(400).json(errorResponse(req, "Missing input parameter"));
+      throw 'Missing input parameter'
     }
 
     const { firstName, lastName, phone, landLine, addressLine1, addressLine2, city, state, zip, isActive } = req.body;
@@ -145,9 +134,7 @@ module.exports.updateUser = (req, res, next) => {
       .then((user) => {
         res.status(200).json(successResponse(req, user));
       })
-      .catch((error) => {
-        res.status(400).json(errorResponse(req, error.message));
-      });
+      .catch(next);
   } catch (error) {
     next(error);
   }
@@ -162,15 +149,13 @@ module.exports.deleteUser = (req, res, next) => {
     } else if (email) {
       filter = { email };
     } else {
-      res.status(400).json(errorResponse(req, "Missing input parameter"));
+      throw "Missing input parameter"
     }
     User.deleteOne(filter)
       .then((count) => {
         res.status(200).json(successResponse(req, count));
       })
-      .catch((error) => {
-        res.status(400).json(errorResponse(req, error.message));
-      });
+      .catch(next);
   } catch (error) {
     next(error);
   }

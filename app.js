@@ -1,28 +1,25 @@
 const express = require("express");
-const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const userRoutes = require("./routes/user");
-const errorResponse = require("./utils/errorResponse");
+const errorHandler = require("./utils/errorHandler");
+const apiNotFound = require("./utils/apiNotFound");
 const logResponseTime = require("./utils/logResponseTime");
+
 const app = express();
 
-app.use(logResponseTime)
-
-app.use(cors());
+app.use(logResponseTime);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use("/user", userRoutes);
 
-app.use(function (err, req, res, next) {
-  res.status(500).json(errorResponse(req, err));
-});
+app.use(errorHandler);
 
-app.use((req, res) => {
-  res.status(404).json(errorResponse(req, "api not found"));
-});
+app.use(apiNotFound);
 
 app.set("port", process.env.PORT || 4200);
 
